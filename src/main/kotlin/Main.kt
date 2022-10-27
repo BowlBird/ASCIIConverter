@@ -25,9 +25,9 @@ import kotlin.concurrent.thread
 const val threadCount = 8
 fun main(args: Array<String>) {
     val user = UserInterface() //input and output object
-    user.output("> Welcome!", color = Color.GREEN)
-    val imageDirectory = user.askForDirectory("> Please enter a directory containing all the image files you would like process.", messageColor = Color.GREEN, inputColor = Color.CYAN)
-    val outputDirectory = user.askForDirectory("> Please enter a directory where you would like images to be output to.", messageColor = Color.GREEN, inputColor = Color.CYAN)
+    user.output("> Welcome!")
+    val imageDirectory = user.askForDirectory("> Please enter a directory containing all the image files you would like process.")
+    val outputDirectory = user.askForDirectory("> Please enter a directory where you would like images to be output to.")
     val fr = FileResponder(imageDirectory)
 
 
@@ -36,8 +36,8 @@ fun main(args: Array<String>) {
     user.output("")
 
     /* settings */
-    val px = user.askForInt("> Please input a valid px (needs to be a multiple of width and height of all images.", messageColor = Color.GREEN, inputColor = Color.CYAN)
-    val colorMatching = user.askForBool("> Do you want the images to be in color? (true/false)", messageColor = Color.GREEN, inputColor = Color.CYAN)
+    val px = user.askForInt("> Please input a valid px (needs to be a multiple of width and height of all images.")
+    val colorMatching = user.askForBool("> Do you want the images to be in color? (true/false)")
 
     /* creates threadCount threads */
     repeat(threadCount) {
@@ -59,7 +59,7 @@ fun main(args: Array<String>) {
                 user.output("> ($it, $count) has converted the image to an ascii image.")
 
                 ImageIO.write(asciiImage, "png", File("${outputDirectory.absolutePath}\\${file.name}"))
-                user.output("> ($it, $count) has been written!", color = Color.YELLOW)
+                user.output("> ($it, $count) has been written!")
             }
         }
     }
