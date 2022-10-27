@@ -26,7 +26,7 @@ const val threadCount = 8
 fun main(args: Array<String>) {
     val user = UserInterface() //input and output object
     user.output("> Welcome!", color = Color.GREEN)
-    val imageDirectory = user.askForDirectory("> Please enter a directory containing all the image files you would like processed.", messageColor = Color.GREEN, inputColor = Color.CYAN)
+    val imageDirectory = user.askForDirectory("> Please enter a directory containing all the image files you would like process.", messageColor = Color.GREEN, inputColor = Color.CYAN)
     val outputDirectory = user.askForDirectory("> Please enter a directory where you would like images to be output to.", messageColor = Color.GREEN, inputColor = Color.CYAN)
     val fr = FileResponder(imageDirectory)
 
