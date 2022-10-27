@@ -30,8 +30,6 @@ fun main(args: Array<String>) {
     val outputDirectory = user.askForDirectory("> Please enter a directory where you would like images to be output to.")
     val fr = FileResponder(imageDirectory)
 
-
-
     user.output("> Input ${fr.elementsLeft} files.")
     user.output("")
 
@@ -42,13 +40,14 @@ fun main(args: Array<String>) {
     /* creates threadCount threads */
     repeat(threadCount) {
         thread {
-            user.output("> Thread $it has started")
             var count = 0
             while(fr.hasAnotherElement) {
                 count++
-                user.output("> Thread $it has started image $count")
 
-                val file = fr.popFirst() ?: break //needed null because of threading, now lets handle.
+                val file: File
+                try {file = fr.popFirst() ?: break} //needed null because of threading, now lets handle.
+                catch(ex: Exception){break} //if there is less than 8 images, it will throw a no such element exception.
+                user.output("> Thread $it has started image $count")
                 user.output("> ($it, $count) has gotten file reference.")
 
                 val image = ImageIO.read(file)

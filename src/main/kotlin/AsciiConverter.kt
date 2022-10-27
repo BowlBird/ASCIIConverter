@@ -72,6 +72,7 @@ class AsciiConverter(densityChar: String = charDensityList) {
      */
     private fun createImage(charPixelArray: Array<Array<CharPixel>>): BufferedImage {
         val charPX: Int = 16 //how big each character will be drawn to be
+        val charScalar = 1f
 
         val bufferedImage =
             BufferedImage(charPixelArray[0].size * charPX, charPixelArray.size * charPX, BufferedImage.TYPE_INT_RGB)
@@ -79,7 +80,7 @@ class AsciiConverter(densityChar: String = charDensityList) {
 
         for ((i, row) in charPixelArray.withIndex()) {
             for ((j, entry) in row.withIndex()) {
-                graphicsImage.font = Font("Courier", Font.PLAIN, charPX)
+                graphicsImage.font = Font("Courier", Font.BOLD, (charPX* charScalar).toInt())
                 graphicsImage.color = entry.color
                 graphicsImage.drawString(entry.char.toString(), j * charPX, i * charPX + charPX)
             }
