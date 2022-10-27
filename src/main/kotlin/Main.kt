@@ -23,7 +23,7 @@ import kotlin.concurrent.thread
  */
 
 const val threadCount = 8
-fun main() {
+fun main(args: Array<String>) {
     val user = UserInterface() //input and output object
     user.output("> Welcome!", color = Color.GREEN)
     val imageDirectory = user.askForDirectory("> Please enter a directory containing all the image files you would like processed.", messageColor = Color.GREEN, inputColor = Color.CYAN)
