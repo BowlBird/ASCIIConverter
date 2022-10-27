@@ -1,87 +1,50 @@
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import java.awt.FileDialog
-import java.awt.Image
+import java.awt.Color
 import java.io.File
-import java.io.IOException
-import javax.imageio.ImageIO
-import javax.swing.JFrame
-import kotlin.system.measureTimeMillis
+
 
 class UserInterface {
-
     /**
      * returns int
      */
-    fun askForInt(message: String = ""): Int {
-        output(message)
-        return try { return readln().toInt() } catch(ex: NumberFormatException) { askForInt("Invalid input. Please enter an Int:")}
-    }
-
+    fun askForInt(message: String = "", messageColor: Color = Color.WHITE, inputColor: Color = Color.WHITE) = askForConverted(message, messageColor, inputColor, String::toInt)
     /**
      * returns boolean
      */
-    fun askForBool(message: String = ""): Boolean {
-        output(message)
-        return try { return readln().toBoolean() } catch(ex: NumberFormatException) { askForBool("Invalid input. Please enter an Int:")}
-    }
-
-    fun askForString(message: String = ""): String {
-        output(message)
-        return readln()
-    }
-
+    fun askForBool(message: String = "", messageColor: Color = Color.WHITE, inputColor: Color = Color.WHITE) = askForConverted(message, messageColor, inputColor, String::toBoolean)
+    /**
+     *  returns string
+     */
+    fun askForString(message: String = "", messageColor: Color = Color.WHITE, inputColor: Color = Color.WHITE) = askForConverted(message, messageColor, inputColor, String::toString)
     /**
      * returns directory location from user.
      */
-    fun askForDirectory(message: String = ""): File {
-        output(message)
-        val file  = File(askForString("Please enter directory:"))
-
-        return if(file.isDirectory) file else askForDirectory("Please select a directory.")
+    fun askForDirectory(message: String = "", messageColor: Color = Color.WHITE, inputColor: Color = Color.WHITE) = askForConverted(message, messageColor, inputColor) {
+        File(it)
     }
-
     /**
-     * returns a list of images
+     * Converts input to datatype using provided method
      */
-    fun askForImageList(): List<Image> {
-        //asks for user image folder.
-        val filesDialog = openFileDialog(fileType = ".png")
-
-        //checks to see if anything was selected
-        if(filesDialog.isEmpty()) {
-            output("Please selected valid image(s)")
-            askForImageList()
-        }
-
-        val files = filesDialog.toList()
-        val imageList = mutableListOf<Image>()
-
-        try { files.forEach { imageList.add(ImageIO.read(it)) } }
-        catch (ioe: IOException) {
-            output("Failed. One or more files were not images.")
-            askForImageList()
-        }
-        return imageList
+    private fun <T> askForConverted(message: String, messageColor: Color, inputColor: Color, conversionFunction: (String) -> T ): T {
+        output(message, color = messageColor)
+        output(">>> ", color = inputColor, hasNewLine = false)
+        return try {return conversionFunction(readln())} catch(ex: Exception) { askForConverted<T>(message, Color.RED, inputColor, conversionFunction)}
     }
-
-    /**
-     * Opens window to select files
-     */
-    private fun openFileDialog(startingDirectory: String = "C:\\", fileType: String): Array<File> {
-        val fileWindow = FileDialog(JFrame(), "Open Files", FileDialog.LOAD)
-        fileWindow.directory = "C:\\"
-        fileWindow.file = fileType
-        fileWindow.isMultipleMode = true
-        fileWindow.isVisible = true
-        return fileWindow.files
-    }
-
     /**
      * An interface for print
+     * Supports ANSI colors: BLACK, RED, GREEN, YELLOW, BLUE, CYAN, and WHITE
      */
-    fun output(output: String, hasNewLine: Boolean = true) {
-        print("$output ${if(hasNewLine) "\n" else ""}" )
+    fun output(output: String, color: Color = Color.WHITE, hasNewLine: Boolean = true) {
+        val consoleColor = when(color) {
+            Color.BLACK -> "\u001B[30m"
+            Color.RED ->   "\u001B[31m"
+            Color.GREEN -> "\u001B[32m"
+            Color.YELLOW ->"\u001B[33m"
+            Color.BLUE -> "\u001B[34m"
+            Color.CYAN -> "\u001B[36m"
+            Color.WHITE ->"\u001B[37m"
+            else -> "\u001B[37m"
+        }
+
+        print("$consoleColor$output\u001B[0m${if(hasNewLine) "\n" else ""}" )
     }
 }

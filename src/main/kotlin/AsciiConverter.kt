@@ -14,33 +14,12 @@ import kotlin.system.measureTimeMillis
 
 const val charDensityList: String = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'."
 class AsciiConverter(densityChar: String = charDensityList) {
-    data class CharPixel(val color: Color = Color.BLACK, val char: Char = '0') //used to hold information when processing
-    /**
-     * Converts multiple Images
-     */
-    fun convertImages(source: List<BufferedImage>, px: Int): List<BufferedImage> {
-        val returnList = mutableListOf<BufferedImage>()
-
-        val coroutineTime = measureTimeMillis {
-            val deferredList = mutableListOf<Deferred<BufferedImage>>()
-            runBlocking {
-                for ((i, image) in source.withIndex()) {
-                    deferredList.add(i, async { convertImage(source = image, px = px) })
-                }
-                deferredList.forEach {
-                    returnList += it.await()
-                }
-            }
-        }
-        println("TIME: $coroutineTime")
-
-         return returnList
-    }
+    data class CharPixel(var color: Color = Color.BLACK, var char: Char = '0') //used to hold information when processing
 
     /**
      * Converts one image
      */
-    private fun convertImage(source: BufferedImage, px: Int): BufferedImage {
+    fun convertImage(source: BufferedImage, px: Int, withColor: Boolean = true): BufferedImage {
         //cannot convert if source height and width are not evenly divisible by px
         if (source.height % px != 0 || source.width % px != 0)
             throw ExceptionInInitializerError("px needs to be able to evenly divide source image! (there was a remainder when dividing source width or height by px)")
@@ -55,8 +34,9 @@ class AsciiConverter(densityChar: String = charDensityList) {
         runBlocking {
             for (i in 0 until numOfRows) {
                 for (j in 0 until numOfCols) {
-                    charPixel[i][j] = withContext(Dispatchers.Default) {
-                        convertChunk(source.getSubimage(j * px, i * px, px, px))
+                    launch {
+                        val pixel: CharPixel = convertChunk(source.getSubimage(j * px, i * px, px, px))
+                        charPixel[i][j] = if(withColor) pixel else pixel.copy(color = Color.WHITE)
                     }
                 }
             }
